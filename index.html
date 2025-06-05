@@ -1,20 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- CSS -->
-    <link rel="stylesheet" href="src/style.css" />
-    <title>369 Check List</title>
-  </head>
-  <body>
-    <div id="checklist">
-      <input type="checkbox" checked="" value="1" name="r" id="1" />
-      <label for="1">Bread</label>
-      <input type="checkbox" checked="" value="2" name="r" id="2" />
-      <label for="2">Cheese</label>
-      <input type="checkbox" checked="" value="3" name="r" id="3" />
-      <label for="3">Coffee</label>
-    </div>
-  </body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="src/style.css" />
+        <title>369 Check List</title>
+    </head>
+    <body>
+        <div class="checklist-wrapper">
+            <button id="edit-button">Edit</button>
+            <div id="checklist">
+                <!-- items + form -->
+                <form id="add-item-form" class="item" style="display: none">
+                    <input
+                        type="text"
+                        id="new-item"
+                        placeholder="New item..."
+                        autocomplete="off"
+                    />
+                </form>
+            </div>
+        </div>
+    </body>
+    <script src="src/script.js"></script>
 </html>
