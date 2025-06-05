@@ -97,7 +97,7 @@ form.addEventListener("submit", (e) => {
   });
 });
 
-function addItem(text, id) {
+function addItem(text, id, checked = false) {
   const container = document.createElement("div");
   container.className = "item";
 
@@ -105,6 +105,7 @@ function addItem(text, id) {
   checkbox.type = "checkbox";
   checkbox.id = `item-${id}`;
   checkbox.disabled = isEditing;
+  checkbox.checked = checked;
 
   const label = document.createElement("label");
   label.setAttribute("for", checkbox.id);
@@ -152,4 +153,88 @@ document.addEventListener("DOMContentLoaded", () => {
       window.getSelection()?.removeAllRanges(); // rimuove selezione se avviata
     }
   });
+});
+
+shareButton.addEventListener("click", () => {
+  const data = [];
+
+  document.querySelectorAll("#checklist .item").forEach((item) => {
+    const checkbox = item.querySelector("input[type='checkbox']");
+    const label = item.querySelector("label");
+    if (checkbox && label) {
+      data.push({
+        text: label.textContent.trim(),
+        checked: checkbox.checked,
+      });
+    }
+  });
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], {
+    type: "application/json",
+  });
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "checklist.json";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+});
+
+const dropZone = document.getElementById("drop-zone");
+
+document.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  dropZone.style.display = "block";
+  dropZone.style.background = "rgba(255, 255, 255, 0.05)";
+});
+
+document.addEventListener("dragleave", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  dropZone.style.display = "none";
+});
+
+document.addEventListener("drop", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  dropZone.style.display = "none";
+
+  const file = e.dataTransfer.files[0];
+  if (!file || !file.name.endsWith(".json")) {
+    alert("Devi trascinare un file .json valido.");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    try {
+      const raw = event.target.result.trim().replace(/^\uFEFF/, "");
+      const form = document.getElementById("add-item-form");
+
+      const data = JSON.parse(raw);
+      if (!Array.isArray(data)) throw new Error("Formato JSON non valido");
+
+      document.querySelectorAll("#checklist .item").forEach((el) => {
+        if (el.id !== "add-item-form") el.remove();
+      });
+
+      data.forEach((entry) => {
+        if (typeof entry.text === "string") {
+          itemId++;
+          addItem(entry.text, itemId, !!entry.checked);
+        }
+      });
+
+      checklist.appendChild(form);
+    } catch (err) {
+      alert("Errore durante il parsing del file JSON.");
+      console.error(err);
+    }
+  };
+
+  reader.readAsText(file);
 });
