@@ -113,6 +113,7 @@ body {
 #checklist label::before {
     height: 2px;
     width: 8px;
+    top: 0.6em; /* posizionamento vicino alla prima riga */
     left: -27px;
     background: var(--check);
     border-radius: 2px;
@@ -121,7 +122,7 @@ body {
 #checklist label::after {
     height: 4px;
     width: 4px;
-    top: 8px;
+    top: 0.35em;
     left: -25px;
     border-radius: 50%;
 }
@@ -283,6 +284,8 @@ body {
     outline: none;
     width: 100%;
     max-width: 100%;
+    background-color: var(--text);
+    color: #222939;
 }
 
 .edit-input {
@@ -292,6 +295,16 @@ body {
     border: none;
     outline: none;
     font-family: inherit;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    line-height: 1.4;
+    resize: none;
+    min-height: 1.4em;
+    padding: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+    box-sizing: border-box;
 }
 
 .delete-button {

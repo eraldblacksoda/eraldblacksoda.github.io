@@ -40,41 +40,39 @@ function enableInlineEdit(e) {
   const container = label.parentElement;
 
   const currentText = label.textContent;
-  const input = document.createElement("input");
-  input.type = "text";
-  input.value = currentText;
-  input.className = "edit-input";
-  input.style = `
-            font-size: 20px;
-            background: transparent;
-            color: var(--text);
-            border: none;
-            outline: none;
-            font-family: inherit;
-            width: 100%;
-        `;
+  const textarea = document.createElement("textarea");
+  textarea.className = "edit-input";
+  textarea.value = currentText;
+  textarea.rows = 1;
+  textarea.style.resize = "none";
 
-  label.replaceWith(input);
-  input.focus();
+  label.replaceWith(textarea);
+  textarea.style.height = textarea.scrollHeight + "px";
 
-  input.addEventListener("blur", () => {
+  textarea.focus();
+
+  textarea.addEventListener("input", () => {
+    textarea.style.height = "auto";
+    textarea.style.height = textarea.scrollHeight + "px";
+  });
+
+  textarea.addEventListener("blur", () => {
     const newLabel = document.createElement("label");
     newLabel.setAttribute(
       "for",
       container.querySelector("input[type='checkbox']").id,
     );
-    newLabel.textContent = input.value || currentText;
-    container.replaceChild(newLabel, input);
-
-    // Ricollega listener se ancora in editing
+    newLabel.textContent = textarea.value || currentText;
+    container.replaceChild(newLabel, textarea);
     if (isEditing) {
       newLabel.addEventListener("click", enableInlineEdit);
     }
   });
 
-  input.addEventListener("keydown", (e) => {
+  textarea.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
-      input.blur();
+      e.preventDefault();
+      textarea.blur();
     }
   });
 }
@@ -131,12 +129,14 @@ function addItem(text, id, checked = false) {
 
 window.addEventListener("DOMContentLoaded", () => {
   const initialItems = [
-    "Task1",
-    "Task2",
-    "Task3",
-    "Task4",
-    "Task5",
-    "Long task Lorem Ipsum",
+    "Clicca sugli elementi per checkarli / uncheckarli",
+    "Clicca 'Edit' per editare la lista",
+    "Aggiungi elementi alla lista inserendoli sul campo di testo",
+    "Premi 'x' per eliminare elementi",
+    "Clicca su un elemento della lista (in edit mode) per modificarlo",
+    "Clicca 'Done' quando hai finito di editare",
+    "Premi su 'Share' per scaricare un .json della tua lista",
+    "Ricarica la pagina e droppaci dentro il .json appena scaricato",
   ];
   initialItems.forEach((text) => {
     itemId++;
