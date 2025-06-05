@@ -1,4 +1,6 @@
 const editButton = document.getElementById("edit-button");
+const shareButton = document.getElementById("share-button");
+
 const checklist = document.getElementById("checklist");
 const form = document.getElementById("add-item-form");
 const newItemInput = document.getElementById("new-item");
@@ -11,6 +13,8 @@ function toggleEditingMode(state) {
   editButton.textContent = isEditing ? "Done" : "Edit";
   editButton.classList.toggle("editing", isEditing);
   form.style.display = isEditing ? "flex" : "none";
+
+  shareButton.classList.toggle("hidden", isEditing);
 
   document.querySelectorAll(".delete-button").forEach((btn) => {
     btn.style.display = isEditing ? "inline" : "none";
@@ -84,6 +88,13 @@ form.addEventListener("submit", (e) => {
   itemId++;
   addItem(text, itemId);
   newItemInput.value = "";
+  const offset = 80; // altezza extra che vuoi lasciare visibile
+  const rect = form.getBoundingClientRect();
+  const absoluteTop = rect.top + window.scrollY;
+  window.scrollTo({
+    top: absoluteTop - offset,
+    behavior: "smooth",
+  });
 });
 
 function addItem(text, id) {
@@ -93,10 +104,15 @@ function addItem(text, id) {
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
   checkbox.id = `item-${id}`;
+  checkbox.disabled = isEditing;
 
   const label = document.createElement("label");
   label.setAttribute("for", checkbox.id);
   label.textContent = text;
+
+  if (isEditing) {
+    label.addEventListener("click", enableInlineEdit);
+  }
 
   const deleteBtn = document.createElement("button");
   deleteBtn.textContent = "X";
@@ -109,7 +125,6 @@ function addItem(text, id) {
   container.appendChild(label);
   container.appendChild(deleteBtn);
 
-  // Inserisci prima del form
   checklist.insertBefore(container, form);
 }
 
